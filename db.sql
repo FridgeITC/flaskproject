@@ -1,3 +1,6 @@
+CREATE DATABASE nds;
+USE nds;
+
 CREATE TABLE `zone` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
