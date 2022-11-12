@@ -84,4 +84,4 @@ def not_found(error=None):
 jwt = JWT(app, authenticate, identity)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host='0.0.0.0', port=8080, debug=False, use_reloader=False, threaded=True)
