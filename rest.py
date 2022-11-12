@@ -5,32 +5,32 @@ from flask import jsonify, request
 from flask_jwt import JWT, jwt_required, current_identity
 from werkzeug.security import generate_password_hash, check_password_hash
 
-class User(object):	
-	def __init__(self, id, username):
-		self.id = id
-		self.username = username
+from fridge import fridge
 
-	def __str__(self):
-		return "User(id='%s')" % self.id
+# Models:
+from models.ModelUser import ModelUser
+
+# Entities:
+from models.entities.User import User
 
 @app.route('/rest-auth')
 @jwt_required()
 def get_response():
 	return jsonify('You are an authenticate person to see this message')
 
-def authenticate(username, password):	
-	if username and password:
+def authenticate(email, password):	
+	if email and password:
 		conn = None;
 		cursor = None;
 		try:
 			conn = mysql.connect()
 			cursor = conn.cursor(pymysql.cursors.DictCursor)
-			cursor.execute("SELECT id, username, password FROM user WHERE username=%s", username)
+			cursor.execute("SELECT id, email, password FROM user WHERE email=%s", email)
 			row = cursor.fetchone()
 			
 			if row:
 				if check_password_hash(row['password'], password):
-					return User(row['id'], row['username'])
+					return User(row['id'], row['email'])
 			else:
 				return None
 		except Exception as e:
@@ -47,11 +47,11 @@ def identity(payload):
 		try:
 			conn = mysql.connect()
 			cursor = conn.cursor(pymysql.cursors.DictCursor)
-			cursor.execute("SELECT id, username FROM user WHERE id=%s", payload['identity'])
+			cursor.execute("SELECT id, email FROM user WHERE id=%s", payload['identity'])
 			row = cursor.fetchone()
 			
 			if row:
-				return (row['id'], row['username'])
+				return (row['id'], row['email'])
 			else:
 				return None
 		except Exception as e:
@@ -62,34 +62,13 @@ def identity(payload):
 	else:
 		return None
 
+app.register_blueprint(fridge)
+
 @app.route('/add-user', methods=['POST'])
 def add_user():
-	conn = None
-	cursor = None
-	try:
-		_json = request.json
-		_username = _json['username']
-		_password = _json['password']
-
-		if _username and _password and request.method == 'POST':
-
-			_hashed_password = generate_password_hash(_password)
-			sql = "INSERT INTO user(username, password) VALUES(%s, %s)"
-			data = (_username, _hashed_password)
-			conn = mysql.connect()
-			cursor = conn.cursor()
-			cursor.execute(sql, data)
-			conn.commit()
-			resp = jsonify('User added successfully!')
-			resp.status_code = 200
-			return resp
-		else:
-			return not_found()
-	except Exception as e:
-		print(e)
-	finally:
-		cursor.close() 
-		conn.close()
+	db = mysql.connect()
+	_json = request.json
+	return ModelUser.add_user(db, _json)
         
 @app.errorhandler(404)
 def not_found(error=None):
