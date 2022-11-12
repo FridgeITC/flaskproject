@@ -1,6 +1,6 @@
 from flask import Blueprint
 
-fridge = Blueprint('auth', __name__,  url_prefix='/api/v1/fridge')
+fridge = Blueprint('fridge', __name__)
 
 @fridge.get('/')
 def get_all():
