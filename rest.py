@@ -2,10 +2,10 @@ import pymysql
 from app import app
 from db import mysql
 from flask import jsonify, request
-from flask_jwt import JWT, jwt_required, current_identity
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask_jwt import JWT, jwt_required
+from werkzeug.security import check_password_hash
 
-from fridge import fridge
+from routes.fridge import fridge
 
 # Models:
 from models.ModelUser import ModelUser
@@ -61,8 +61,6 @@ def identity(payload):
 			conn.close()
 	else:
 		return None
-
-app.register_blueprint(fridge)
 
 @app.route('/add-user', methods=['POST'])
 def add_user():
