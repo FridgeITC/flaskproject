@@ -1,7 +1,7 @@
 from flask import jsonify, request
 from db import mysql
 
-class ModelZone():
+class ModelCatalog():
     @classmethod
     def get_all(self):
         db = None
@@ -9,7 +9,7 @@ class ModelZone():
         try:
           db = mysql.connect()
           if request.method == 'GET':
-            sql = "SELECT * FROM zone"
+            sql = "SELECT * FROM catalog"
             cursor = db.cursor()
             cursor.execute(sql)
             data = cursor.fetchall()
@@ -32,14 +32,15 @@ class ModelZone():
           db = mysql.connect()
           _json = request.json
           _name = _json['name']
+          _price = _json['price']
 
-          if _name and request.method == 'POST':
-            sql = "INSERT INTO zone(name) VALUES(%s)"
-            data = (_name)
+          if _name and _price and request.method == 'POST':
+            sql = "INSERT INTO catalog(name, price) VALUES(%s, %s)"
+            data = (_name, _price)
             cursor = db.cursor()
             cursor.execute(sql, data)
             db.commit()
-            resp = jsonify({"status": 200, "message": "Zone added succesfully"})
+            resp = jsonify({"status": 200, "message": "Product added succesfully"})
             resp.status_code = 200
             return resp
         except Exception as e:
@@ -58,12 +59,12 @@ class ModelZone():
           _id = _json['id']
 
           if _id and request.method == 'POST':
-            sql = "DELETE FROM zone WHERE id=%s"
+            sql = "DELETE FROM catalog WHERE id=%s"
             data = (_id)
             cursor = db.cursor()
             cursor.execute(sql, data)
             db.commit()
-            resp = jsonify({"status": 200, "message": "Zone removed succesfully"})
+            resp = jsonify({"status": 200, "message": "Product removed succesfully"})
             resp.status_code = 200
             return resp
         except Exception as e:

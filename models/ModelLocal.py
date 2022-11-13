@@ -32,11 +32,11 @@ class ModelLocal():
           db = mysql.connect()
           _json = request.json
           _name = _json['name']
-          _zoneId = _json['zoneId']
+          _zone = _json['zone']
 
           if _name and request.method == 'POST':
             sql = "INSERT INTO local(name, zoneId) VALUES(%s, %s)"
-            data = (_name, _zoneId)
+            data = (_name, _zone)
             cursor = db.cursor()
             cursor.execute(sql, data)
             db.commit()
