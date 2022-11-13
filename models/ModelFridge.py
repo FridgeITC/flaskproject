@@ -1,7 +1,7 @@
 from flask import jsonify, request
 from db import mysql
 
-class ModelZone():
+class ModelFridge():
     @classmethod
     def get_all(self):
         db = None
@@ -9,7 +9,7 @@ class ModelZone():
         try:
           db = mysql.connect()
           if request.method == 'GET':
-            sql = "SELECT * FROM zone"
+            sql = "SELECT * FROM fridge"
             cursor = db.cursor()
             cursor.execute(sql)
             data = cursor.fetchall()
@@ -31,15 +31,17 @@ class ModelZone():
         try:
           db = mysql.connect()
           _json = request.json
-          _name = _json['name']
+          _local = _json['local']
+          _capacity = _json['capacity']
+          _rows = _json['rows']
 
-          if _name and request.method == 'POST':
-            sql = "INSERT INTO zone(name) VALUES(%s)"
-            data = (_name)
+          if _local and _capacity and _rows and request.method == 'POST':
+            sql = "INSERT INTO fridge(localId, capacity, rows) VALUES(%s, %s, %s)"
+            data = (_local, _capacity, _rows)
             cursor = db.cursor()
             cursor.execute(sql, data)
             db.commit()
-            resp = jsonify({"status": 200, "message": "Zone added succesfully"})
+            resp = jsonify({"status": 200, "message": "Fridge added succesfully"})
             resp.status_code = 200
             return resp
         except Exception as e:
@@ -58,12 +60,12 @@ class ModelZone():
           _id = _json['id']
 
           if _id and request.method == 'POST':
-            sql = "DELETE FROM zone WHERE id=%s"
+            sql = "DELETE FROM fridge WHERE id=%s"
             data = (_id)
             cursor = db.cursor()
             cursor.execute(sql, data)
             db.commit()
-            resp = jsonify({"status": 200, "message": "Zone removed succesfully"})
+            resp = jsonify({"status": 200, "message": "Fridge removed succesfully"})
             resp.status_code = 200
             return resp
         except Exception as e:
