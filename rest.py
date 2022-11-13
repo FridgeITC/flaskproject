@@ -18,14 +18,14 @@ from models.entities.User import User
 def get_response():
 	return jsonify('You are an authenticate person to see this message')
 
-def authenticate(email, password):	
-	if email and password:
+def authenticate(username, password):	
+	if username and password:
 		conn = None;
-		cursor = None;
+		cursor = None
 		try:
 			conn = mysql.connect()
 			cursor = conn.cursor(pymysql.cursors.DictCursor)
-			cursor.execute("SELECT id, email, password FROM user WHERE email=%s", email)
+			cursor.execute("SELECT id, email, password FROM user WHERE email=%s", username)
 			row = cursor.fetchone()
 			
 			if row:
@@ -64,9 +64,8 @@ def identity(payload):
 
 @app.route('/add-user', methods=['POST'])
 def add_user():
-	db = mysql.connect()
 	_json = request.json
-	return ModelUser.add_user(db, _json)
+	return ModelUser.add_user(_json)
         
 @app.errorhandler(404)
 def not_found(error=None):

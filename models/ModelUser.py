@@ -1,12 +1,15 @@
 from .entities.User import User
 from flask import jsonify, request
+from db import mysql
 from werkzeug.security import generate_password_hash
 
 class ModelUser():
     @classmethod
-    def add_user(self, db, _json):
+    def add_user(self, _json):
+        db = None
         cursor = None
         try:
+          db = mysql.connect()
           _json = request.json
           _email = _json['email']
           _password = _json['password']
@@ -19,7 +22,7 @@ class ModelUser():
             cursor = db.cursor()
             cursor.execute(sql, data)
             db.commit()
-            resp = jsonify('User added successfully!')
+            resp = jsonify({"status": 200, "message": "User added succesfully"})
             resp.status_code = 200
             return resp
         except Exception as e:
