@@ -1,12 +1,14 @@
 from flask import Blueprint, request, jsonify
-
+import torch
+import os
 model = Blueprint('model', __name__)
 
-
+path = os.path.join(os.getcwd(), 'best.pt')
+best = torch.hub.load('ultralytics/yolov5', 'custom', path=path)
 @model.route('/image', methods=['POST'])
 def inference():
     if 'image' not in request.files:
         return jsonify({"done": False, 'message': 'There was no image for inference'})
     image = request.files['image']
-    print(image)
-    return []
+    results = best(image)
+    return jsonify(results)
