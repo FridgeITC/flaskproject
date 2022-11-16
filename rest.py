@@ -14,28 +14,27 @@ import argparse
 def get_response():
     return jsonify('You are an authenticate person to see this message')
 
-
-def authenticate(email, password):
-    if email and password:
-        conn = None;
-        cursor = None;
-        try:
-            conn = mysql.connect()
-            cursor = conn.cursor(pymysql.cursors.DictCursor)
-            cursor.execute("SELECT id, email, password FROM user WHERE email=%s", email)
-            row = cursor.fetchone()
-
-            if row:
-                if check_password_hash(row['password'], password):
-                    return User(row['id'], row['email'])
-            else:
-                return None
-        except Exception as e:
-            print(e)
-        finally:
-            cursor.close()
-            conn.close()
-    return None
+def authenticate(username, password):
+	if username and password:
+		conn = None;
+		cursor = None
+		try:
+			conn = mysql.connect()
+			cursor = conn.cursor(pymysql.cursors.DictCursor)
+			cursor.execute("SELECT id, email, password FROM user WHERE email=%s", username)
+			row = cursor.fetchone()
+			
+			if row:
+				if check_password_hash(row['password'], password):
+					return User(row['id'], row['email'])
+			else:
+				return None
+		except Exception as e:
+			print(e)
+		finally:
+			cursor.close() 
+			conn.close()
+	return None
 
 
 def identity(payload):
@@ -66,7 +65,6 @@ def add_user():
     db = mysql.connect()
     _json = request.json
     return ModelUser.add_user(db, _json)
-
 
 @app.errorhandler(404)
 def not_found(error=None):

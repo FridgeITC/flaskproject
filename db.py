@@ -1,10 +1,13 @@
-from app import app
 from flaskext.mysql import MySQL
+from dotenv import load_dotenv
+
+import os
+
+load_dotenv()
+
+MYSQL_USER = os.getenv("MYSQL_USER")
+MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
+MYSQL_DB = os.getenv("MYSQL_DB")
+MYSQL_HOST = os.getenv("MYSQL_HOST")
 
 mysql = MySQL()
-
-app.config['MYSQL_DATABASE_USER'] = 'nds'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'rootroot'
-app.config['MYSQL_DATABASE_DB'] = 'nds'
-app.config['MYSQL_DATABASE_HOST'] = 'nds-fridge.cnqk716tpw2u.us-east-1.rds.amazonaws.com'
-mysql.init_app(app)
