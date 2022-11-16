@@ -2,11 +2,10 @@ import pymysql
 from flask import jsonify, request
 from flask_jwt import JWT, jwt_required
 from werkzeug.security import check_password_hash
-
 # Models:
-from models.ModelUser import ModelUser
+from type.ModelUser import ModelUser
 # Entities:
-from models.entities.User import User
+from type.entities.User import User
 from app import app
 from db import mysql
 @app.route('/rest-auth')
@@ -83,4 +82,4 @@ def not_found(error=None):
 jwt = JWT(app, authenticate, identity)
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=8080, debug=False, use_reloader=False, threaded=True)
+    app.run(host='0.0.0.0', port=8080, debug=False, use_reloader=False)
