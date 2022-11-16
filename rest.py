@@ -8,6 +8,7 @@ from type.ModelUser import ModelUser
 from type.entities.User import User
 from app import app
 from db import mysql
+import argparse
 @app.route('/rest-auth')
 @jwt_required()
 def get_response():
@@ -82,4 +83,7 @@ def not_found(error=None):
 jwt = JWT(app, authenticate, identity)
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=8080, debug=False, use_reloader=False)
+    parser = argparse.ArgumentParser(description="Flask api exposing yolov5 model")
+    parser.add_argument("--port", default=8080, type=int, help="port number")
+    args = parser.parse_args()
+    app.run(host='0.0.0.0', port=args.port, debug=False, use_reloader=False)
