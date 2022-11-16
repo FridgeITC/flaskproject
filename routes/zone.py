@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask import request
 from flask_jwt import jwt_required
-from models.ModelZone import ModelZone
+from type.ModelZone import ModelZone
 
 zone = Blueprint('zone', __name__, url_prefix='/zone')
 

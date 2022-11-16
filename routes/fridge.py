@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask import request
 from flask_jwt import jwt_required
-from models.ModelFridge import ModelFridge
+from type.ModelFridge import ModelFridge
 
 fridge = Blueprint('fridge', __name__, url_prefix='/fridge')
 
