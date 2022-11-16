@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask import request
 from flask_jwt import jwt_required
-from models.ModelLocal import ModelLocal
+from type.ModelLocal import ModelLocal
 
 local = Blueprint('local', __name__, url_prefix='/local')
 
