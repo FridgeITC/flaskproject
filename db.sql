@@ -19,7 +19,7 @@ CREATE TABLE `fridge` (
   `id` int NOT NULL AUTO_INCREMENT,
   `localId` int NOT NULL,
   `capacity` int NOT NULL,
-  `rows` int NOT NULL,
+  `numRows` int NOT NULL, # Edited schema because of reserved word of mysql naming conflict
   PRIMARY KEY (`id`),
   FOREIGN KEY (localId) REFERENCES local(id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
