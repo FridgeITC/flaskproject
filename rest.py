@@ -2,8 +2,9 @@ import pymysql
 from app import app
 from db import mysql
 from flask import jsonify, request
-from flask_jwt import JWT, jwt_required
+from flask_jwt import JWT
 from werkzeug.security import check_password_hash
+from flasgger.utils import swag_from
 
 from routes.fridge import fridge
 
@@ -12,11 +13,6 @@ from models.ModelUser import ModelUser
 
 # Entities:
 from models.entities.User import User
-
-@app.route('/rest-auth')
-@jwt_required()
-def get_response():
-	return jsonify('You are an authenticate person to see this message')
 
 def authenticate(username, password):	
 	if username and password:

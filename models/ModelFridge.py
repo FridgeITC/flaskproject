@@ -13,9 +13,19 @@ class ModelFridge():
             cursor = db.cursor()
             cursor.execute(sql)
             data = cursor.fetchall()
-            print(data)
+            
+            json_response = []
+
+            for f in data:
+              json_response.append({
+                'id': f[0],
+                'localId': f[1],
+                'capacity': f[2],
+                'rows': f[3]
+              })
+
             db.commit()
-            resp = jsonify(data)
+            resp = jsonify(json_response)
             resp.status_code = 200
             return resp
         except Exception as e:
