@@ -93,10 +93,7 @@ INSERT INTO catalog(id, name, price)
         (24, "ciel_fresa_1l",  17),
         (25, "ciel_natural_600ml", 18),
         (26, "del_valle_durazno_413ml", 19),
-        (27, "ciel_limon_1l", 22);
-  /*
-          This also are in the model, but cannot be infered yet
-          28: vacio
-          29: con_precio
-          30: sin_precio
-   */
+        (27, "ciel_limon_1l", 22),
+        (28, 'vacio', 0),
+        (29, 'con_precio', 0),
+        (30, 'sin_precio', 0);
