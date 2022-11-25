@@ -43,8 +43,11 @@ CREATE TABLE `imageRecord` (
 CREATE TABLE `product` (
   `id` int NOT NULL AUTO_INCREMENT,
   `productId` int DEFAULT NULL,
-  `productLocationX` int NOT NULL,
-  `productLocationY` int NOT NULL,
+  `xmax` float NOT NULL,
+  `ymax` float NOT NULL,
+  `xmin` float NOT NULL,
+  `ymin` float NOT NULL,
+  `confidence` float NOT NULL,
   `imageId` int NOT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (productId) REFERENCES catalog(id),
