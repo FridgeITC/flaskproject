@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask import request
 from flask_jwt import jwt_required
-from models.ModelCatalog import ModelCatalog
+from type.ModelCatalog import ModelCatalog
 
 catalog = Blueprint('catalog', __name__, url_prefix='/catalog')
 
