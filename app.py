@@ -29,7 +29,7 @@ swagger_config = {
   'specs_route': '/swagger/'
 }
 
-swagger = Swagger(app, template=SWAGGER_TEMPLATE, config=swagger_config)
+swagger = Swagger(app, config=swagger_config, template=SWAGGER_TEMPLATE)
 
 # db
 app.config['MYSQL_DATABASE_USER'] = MYSQL_USER

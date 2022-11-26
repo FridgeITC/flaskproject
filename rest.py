@@ -17,7 +17,7 @@ import argparse
 def get_response():
     return jsonify('You are an authenticate person to see this message')
 
-from models.entities.User import User
+from type.entities.User import User
 
 def authenticate(username, password):
 	if username and password:
