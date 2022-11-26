@@ -13,9 +13,19 @@ class ModelCatalog():
             cursor = db.cursor()
             cursor.execute(sql)
             data = cursor.fetchall()
+
+            json_response = []
+
+            for f in data:
+              json_response.append({
+                'id': f[0],
+                'name': f[1],
+                'price': f[2]
+              })
+
             print(data)
             db.commit()
-            resp = jsonify(data)
+            resp = jsonify(json_response)
             resp.status_code = 200
             return resp
         except Exception as e:
