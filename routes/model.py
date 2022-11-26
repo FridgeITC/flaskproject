@@ -13,14 +13,54 @@ yolo = torch.hub.load('ultralytics/yolov5', 'custom', path=path)
 # TODO: ADD DIFERENT HTTP CODES ON ERROR
 @model.route('/image', methods=['POST'])
 def inference():
-    '''
-    TODO: FINISH THE COMMENT OF THIS ENDPOINT
-    Receives a json with the folowing format:
-        fridgeId: The id of the fridge that is going to be populated
-        image: The multipart form data of the image to run the inference on
-    :return:
-    JSON with and array of the detected objects and their position
-    '''
+    """
+      Makes the inference on the passed image and inserts the inference to the DB given a fridgeId
+      ---
+      tags:
+        - image
+      security:
+      - JWT: ['Authorization']
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: image
+          type: file
+          description: The image for model inference
+        - in: formData
+          name: fridgeId
+          type: int
+          description: The id of the fridge from where the foto was taken
+      responses:
+        200:
+          description: The list of the detected objects and their coordinates
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                class:
+                  type: integer
+                  example: 6
+                xmin:
+                  type: number
+                  example: 52.1234567890
+                ymin:
+                  type: number
+                  example: 585.1234567890
+                xmax:
+                  type: number
+                  example: 1234.1234567890
+                ymax:
+                  type: number
+                  example: 1234.1234567890
+                confidence:
+                  type: number
+                  example: 0.93
+                name:
+                  type: string
+                  example: 'coca_cola_light_botella_355ml'
+    """
     # -- Validation
     fridge_id = request.form.get('fridgeId')
     if fridge_id is None:
