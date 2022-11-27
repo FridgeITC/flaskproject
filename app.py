@@ -1,3 +1,5 @@
+import datetime
+
 from flask import Flask
 from flasgger import Swagger
 from routes.fridge import fridge
@@ -9,7 +11,7 @@ from db import mysql, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DB, MYSQL_HOST
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'XDYgFZYLry5Gk7um04JzPOhhuNbzf9cH'
-
+app.config['JWT_EXPIRATION_DELTA'] = datetime.timedelta(seconds=10080)
 # swagger
 app.config['SWAGGER'] = {'title': 'Fridge', 'uiversion': 3}
 SWAGGER_TEMPLATE = {"securityDefinitions": {"JWT": {"type": "apiKey", "name": "Authorization", "in": "header"}}}
