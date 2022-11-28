@@ -82,3 +82,37 @@ class ModelLocal():
         finally:
           cursor.close() 
           db.close()
+
+    @classmethod
+    def update(self, _json):
+        db = None
+        cursor = None
+        try:
+            db = mysql.connect()
+            items = ''
+            if 'id' not in _json.keys():
+                return jsonify({"status": 422, 'message': 'id was not provided'})
+            attrs=[]
+            for key, val in _json.items():
+                if key == 'id':
+                    continue
+                items += f'{key} = %s, '
+                attrs.append(val)
+            attrs.append(_json['id'])
+            items = items[:-2] # Removing last comma
+            sql = "UPDATE local SET {items} WHERE id = %s;".format(items=items)
+            print(sql)
+            #print(sql % data)
+            cursor = db.cursor()
+            cursor.execute(sql, tuple(attrs))
+            print(items)
+            db.commit()
+            resp = jsonify({"status": 200, "message": "Local updated successfully"})
+            resp.status_code = 200
+            return resp
+        except Exception as e:
+            print(e)
+            return jsonify({"status":500, "message":" Some error happened"})
+        finally:
+            cursor.close()
+            db.close()

@@ -82,6 +82,53 @@ def not_found(error=None):
 
     return resp
 
+@app.route("/login", methods=["POST"])
+def login():
+    """
+    User authenticate method.
+    ---
+    description: Authenticate user with supplied credentials.
+    tags:
+    - Auth
+    parameters:
+    - in: 'body'
+      name: 'body'
+      description: 'Accepts username and password'
+      required: true,
+      schema:
+        type: 'object'
+        properties:
+          username:
+            type: string
+            example: 'alejandro@hernandez.dev'
+          password:
+            type: string
+            example: 'B230916'
+    responses:
+      200:
+        description: User successfully logged in.
+      400:
+        description: User login failed.
+    """
+    try:
+        _json = request.json
+        username = _json['username']
+        password = _json['password']
+        print(username, password)
+        user = authenticate(username, password)
+        if not user:
+            raise Exception("User not found!")
+
+        access_token = jwt.jwt_encode_callback(user)
+        resp = jsonify({"message": "User authenticated", 'jwt-token': "JWT "+access_token.decode()})
+        resp.status_code = 200
+
+    except Exception as e:
+        print(e)
+        resp = jsonify({"message": "Bad username and/or password"})
+        resp.status_code = 401
+
+    return resp
 
 jwt = JWT(app, authenticate, identity)
 
