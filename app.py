@@ -11,7 +11,9 @@ from flask_cors import CORS
 from db import mysql, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DB, MYSQL_HOST
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins='*',
+     headers=['Content-Type', 'Authorization'],
+     expose_headers='Authorization')
 app.config['SECRET_KEY'] = 'XDYgFZYLry5Gk7um04JzPOhhuNbzf9cH'
 app.config['JWT_EXPIRATION_DELTA'] = datetime.timedelta(seconds=10080)
 # swagger
