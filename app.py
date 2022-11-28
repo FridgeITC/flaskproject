@@ -7,9 +7,11 @@ from routes.model import model
 from routes.zone import zone
 from routes.local import local
 from routes.catalog import catalog
+from flask_cors import CORS
 from db import mysql, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DB, MYSQL_HOST
 
 app = Flask(__name__)
+CORS(app)
 app.config['SECRET_KEY'] = 'XDYgFZYLry5Gk7um04JzPOhhuNbzf9cH'
 app.config['JWT_EXPIRATION_DELTA'] = datetime.timedelta(seconds=10080)
 # swagger
