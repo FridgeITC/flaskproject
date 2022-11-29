@@ -80,6 +80,48 @@ def add():
   _json = request.json
   return ModelFridge.add(_json)
 
+@fridge.post('/get')
+@jwt_required()
+def get_by_id():
+  """
+  Add new fridge
+  ---
+  tags:
+    - fridge
+  security:
+  - JWT: ['Authorization']
+  parameters:
+  - in: 'body'
+    name: 'body'
+    description: 'Accepts local ID, capacity and rows'
+    required: true,
+    schema:
+      type: 'object'
+      properties:
+        local:
+          type: integer
+          example: 1
+        capacity:
+          type: integer
+          example: 50
+        rows:
+          type: integer
+          example: 5
+  responses:
+    200:
+      schema:
+        type: object
+        properties:
+          status:
+            type: integer
+            example: 200
+          message:
+            type: string
+            example: 'Fridge added succesfully'
+  """
+  _json = request.json
+  return ModelFridge.get_by_id(_json)
+
 @fridge.post('/delete')
 @jwt_required()
 def delete():
