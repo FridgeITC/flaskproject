@@ -6,13 +6,17 @@ class ModelLabels:
         products = []
         lbls = []
         lbl_cls = 29;  # This class belongs to the yaml of training and its for labels
-
+        empty_cls = 28;
+        empties = 0;
         for idx, record in enumerate(records):
             record['idx'] = idx
             if record['class'] == lbl_cls:
                 lbls.append(record)
             else:
                 products.append(record)
+            if record['class'] == empty_cls:
+                empties += 1
+        self.empties = empties
         self.products = products
         self.lbls = lbls
 
@@ -33,6 +37,9 @@ class ModelLabels:
         x = (p1[0] - pd[0]) ** 2
         y = (p1[1] - pd[1]) ** 2
         return math.sqrt(x + y)
+
+    def getEmpties(self):
+        return self.empties
 
     # return labeled, unlabeled as list of products with their id
     def get_labeled_unlabeled(self):

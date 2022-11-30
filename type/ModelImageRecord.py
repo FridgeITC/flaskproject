@@ -16,8 +16,12 @@ class ModelInferenceInsertion:
             db = mysql.connect()
             if self.id is not None and self.resource is not None:
                 cursor = db.cursor()
-                cursor.execute("INSERT INTO nds.imageRecord(fridgeId, resource, at) VALUES (%s, %s, DEFAULT);",
-                               (self.id, self.resource))
+
+                labeled, unlabeled = self.ModelLabels.get_labeled_unlabeled()
+                labeled, unlabeled = len(labeled), len(unlabeled)
+                empties = self.ModelLabels.getEmpties()
+                cursor.execute("INSERT INTO nds.imageRecord(fridgeId, resource, at, emptyLines, untaggedLines, taggedLines, thirdPartyProducts) VALUES (%s, %s, DEFAULT, %s, %s, %s, %s);",
+                               (self.id, self.resource, empties, unlabeled, labeled, 0)) # TODO DETECT THE COMPANIES THAT DOESNT BELONG
                 image_id = cursor.lastrowid
                 product_query, attr = self.prepare_product_insertion(image_id=image_id)
                 cursor.execute(product_query, tuple(attr))
@@ -38,9 +42,7 @@ class ModelInferenceInsertion:
              self.prepare_floats(product['xmin']), self.prepare_floats(product['ymin']), \
              self.prepare_floats(product['confidence']), image_id]
             for product in self.products]
-        labeled, unlabeled = self.ModelLabels.get_labeled_unlabeled()
 
-        print("Labeled:", labeled,"Unlabeled:", unlabeled)
         flatten = sum(products_inference, [])  # Flatten the 2d list of products into 1d
         # --- Making the query to match dynamically the products
         product_query = '(%s, %s, %s, %s, %s, %s, %s), '.format(imageId=image_id)
