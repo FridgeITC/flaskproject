@@ -9,7 +9,7 @@ class ModelLocal():
         try:
           db = mysql.connect()
           if request.method == 'GET':
-            sql = "SELECT * FROM local"
+            sql = "SELECT local.*, zone.name FROM local INNER JOIN zone ON local.zoneId = zone.id"
             cursor = db.cursor()
             cursor.execute(sql)
             data = cursor.fetchall()
@@ -20,7 +20,8 @@ class ModelLocal():
               json_response.append({
                 'id': f[0],
                 'name': f[1],
-                'zoneId': f[2]
+                'zoneId': f[2],
+                'zoneName': f[3]
               })
 
             print(data)
