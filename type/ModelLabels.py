@@ -13,12 +13,14 @@ class ModelLabels:
 
         for idx, record in enumerate(records):
             record['idx'] = idx
+            if record['class'] == empty_cls:
+                empties += 1
+                continue;
+
             if record['class'] == lbl_cls:
                 lbls.append(record)
             else:
                 products.append(record)
-            if record['class'] == empty_cls:
-                empties += 1
 
         self.empties = empties
         self.labeled, self.unlabeled = self.get_labeled_unlabeled(products, lbls)
