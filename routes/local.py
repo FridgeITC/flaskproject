@@ -5,10 +5,11 @@ from type.ModelLocal import ModelLocal
 
 local = Blueprint('local', __name__, url_prefix='/local')
 
+
 @local.get('/')
 @jwt_required()
 def get_all():
-  """
+    """
   List all locals
   ---
   tags:
@@ -33,12 +34,13 @@ def get_all():
               type: integer
               example: 1
   """
-  return ModelLocal.get_all()
+    return ModelLocal.get_all()
+
 
 @local.post('/add')
 @jwt_required()
 def add():
-  """
+    """
   Add new local
   ---
   tags:
@@ -71,13 +73,14 @@ def add():
             type: string
             example: 'Local added succesfully'
   """
-  _json = request.json
-  return ModelLocal.add(_json)
+    _json = request.json
+    return ModelLocal.add(_json)
+
 
 @local.post('/delete')
 @jwt_required()
 def delete():
-  """
+    """
   Delete local by ID
   ---
   tags:
@@ -107,5 +110,90 @@ def delete():
             type: string
             example: 'Local removed succesfully'
   """
-  _json = request.json
-  return ModelLocal.delete(_json)
+    _json = request.json
+    return ModelLocal.delete(_json)
+
+
+@local.post('/update')
+@jwt_required()
+def update():
+    """
+  updates the local with the attributes presented on the json only
+  ---
+  tags:
+    - local
+  security:
+  - JWT: ['Authorization']
+  parameters:
+  - in: 'body'
+    name: 'body'
+    description: 'Accepts name and zone ID'
+    required: true,
+    schema:
+      type: 'object'
+      properties:
+        name:
+          type: string
+          example: 'OXXO'
+        zoneId:
+          type: integer
+          example: 1
+        id:
+          type: integer
+          example: 2
+  responses:
+    200:
+      schema:
+        type: object
+        properties:
+          status:
+            type: integer
+            example: 200
+          message:
+            type: string
+            example: 'Local updated successfully'
+  """
+    _json = request.json
+    return ModelLocal.update(_json)
+
+@local.post('/get')
+@jwt_required()
+def get_by_id():
+    """
+  updates the local with the attributes presented on the json only
+  ---
+  tags:
+    - local
+  security:
+  - JWT: ['Authorization']
+  parameters:
+  - in: 'body'
+    name: 'body'
+    description: 'Accepts name and zone ID'
+    required: true,
+    schema:
+      type: 'object'
+      properties:
+        name:
+          type: string
+          example: 'OXXO'
+        zoneId:
+          type: integer
+          example: 1
+        id:
+          type: integer
+          example: 2
+  responses:
+    200:
+      schema:
+        type: object
+        properties:
+          status:
+            type: integer
+            example: 200
+          message:
+            type: string
+            example: 'Local updated successfully'
+  """
+    _json = request.json
+    return ModelLocal.get_by_id(_json)
