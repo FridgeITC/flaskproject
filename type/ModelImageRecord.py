@@ -1,13 +1,15 @@
 from flask import jsonify, request
 from db import mysql
 from typing import List, Dict
+from type.ModelLabels import ModelLabels
 
 
 class ModelInferenceInsertion:
     def __init__(self, fridge_id, products: List[Dict]):
         self.id = fridge_id
-        self.resource = 'someurl' # TODO ADD HERE THE INSERTION URL OF THE OBJECT
+        self.resource = 'someurl'  # TODO ADD HERE THE INSERTION URL OF THE OBJECT IN AWS S3
         self.products = products
+        self.ModelLabels = ModelLabels(products)
 
     def insert(self):
         try:
@@ -21,23 +23,28 @@ class ModelInferenceInsertion:
                 cursor.execute(product_query, tuple(attr))
                 db.commit()
         except Exception as e:
-            print( e)
+            print(e)
             # TODO: RETURN BAD REQUEST HTTP STATUS
         finally:
             cursor.close()
             db.close()
+
     def prepare_floats(self, val):
         return float('{:4.5f}'.format(val))
-    def prepare_product_insertion(self, image_id):
-        products_inference = [[product['class'], self.prepare_floats(product['xmax']), self.prepare_floats(product['ymax']),
-                               self.prepare_floats(product['xmin']), self.prepare_floats(product['ymin']),\
-                                    self.prepare_floats(product['confidence']), image_id]
-                              for product in self.products]
 
+    def prepare_product_insertion(self, image_id):
+        products_inference = [
+            [product['class'], self.prepare_floats(product['xmax']), self.prepare_floats(product['ymax']),
+             self.prepare_floats(product['xmin']), self.prepare_floats(product['ymin']), \
+             self.prepare_floats(product['confidence']), image_id]
+            for product in self.products]
+        labeled, unlabeled = self.ModelLabels.get_labeled_unlabeled()
+
+        print("Labeled:", labeled,"Unlabeled:", unlabeled)
         flatten = sum(products_inference, [])  # Flatten the 2d list of products into 1d
         # --- Making the query to match dynamically the products
         product_query = '(%s, %s, %s, %s, %s, %s, %s), '.format(imageId=image_id)
         products_val_list = product_query * len(self.products)
         products_val_list = products_val_list[:-2] + ';'  # Removing the last comma with ;
-        return """INSERT INTO nds.product (productId, xmax, ymax, xmin, ymin, confidence, imageId) VALUES {products}"""\
+        return """INSERT INTO nds.product (productId, xmax, ymax, xmin, ymin, confidence, imageId) VALUES {products}""" \
                    .format(products=products_val_list), flatten
