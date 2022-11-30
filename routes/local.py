@@ -155,3 +155,45 @@ def update():
   """
     _json = request.json
     return ModelLocal.update(_json)
+
+@local.post('/get')
+@jwt_required()
+def get_by_id():
+    """
+  updates the local with the attributes presented on the json only
+  ---
+  tags:
+    - local
+  security:
+  - JWT: ['Authorization']
+  parameters:
+  - in: 'body'
+    name: 'body'
+    description: 'Accepts name and zone ID'
+    required: true,
+    schema:
+      type: 'object'
+      properties:
+        name:
+          type: string
+          example: 'OXXO'
+        zoneId:
+          type: integer
+          example: 1
+        id:
+          type: integer
+          example: 2
+  responses:
+    200:
+      schema:
+        type: object
+        properties:
+          status:
+            type: integer
+            example: 200
+          message:
+            type: string
+            example: 'Local updated successfully'
+  """
+    _json = request.json
+    return ModelLocal.get_by_id(_json)
