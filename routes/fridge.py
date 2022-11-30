@@ -5,7 +5,7 @@ from type.ModelFridge import ModelFridge
 
 fridge = Blueprint('fridge', __name__, url_prefix='/fridge')
 
-@fridge.get('/')
+@fridge.post('/')
 @jwt_required()
 def get_all():
   """
@@ -36,7 +36,8 @@ def get_all():
               type: integer
               example: 15
   """
-  return ModelFridge.get_all()
+  _json = request.json
+  return ModelFridge.get_all(_json)
 
 @fridge.post('/add')
 @jwt_required()
@@ -81,8 +82,8 @@ def add():
   return ModelFridge.add(_json)
 
 @fridge.post('/get')
-@jwt_required()
-def get_by_id():
+#@jwt_required()
+def get():
   """
   Add new fridge
   ---
@@ -120,7 +121,7 @@ def get_by_id():
             example: 'Fridge added succesfully'
   """
   _json = request.json
-  return ModelFridge.get_by_id(_json)
+  return ModelFridge.get(_json)
 
 @fridge.post('/delete')
 @jwt_required()
