@@ -35,6 +35,31 @@ class ModelLocal():
           db.close()
 
     @classmethod
+    def get_by_id(self, _json):
+        db = None
+        cursor = None
+        try:
+          db = mysql.connect()
+          _json = request.json
+          _id = _json['id']
+
+          if _id and request.method == 'POST':
+            sql = "SELECT * FROM local WHERE id=%s"
+            data = (_id)
+            cursor = db.cursor()
+            cursor.execute(sql, data)
+            db.commit()
+            data = cursor.fetchone()
+            resp = jsonify({"id": data[0], "name": data[1], "zone": data[2]})
+            resp.status_code = 200
+            return resp
+        except Exception as e:
+          print(e)
+        finally:
+          cursor.close() 
+          db.close()
+
+    @classmethod
     def add(self, _json):
         db = None
         cursor = None

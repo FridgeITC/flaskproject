@@ -1,5 +1,6 @@
 from flask import jsonify, request
 from db import mysql
+import math
 
 class ModelFridge():
     @classmethod
@@ -11,7 +12,7 @@ class ModelFridge():
           _json = request.json
           _local = _json['local']
           if _local and request.method == 'POST':
-            sql = "SELECT fridge.id, company.name, imageRecord.emptyLines, imageRecord.taggedLines, imageRecord.untaggedLines, imageRecord.thirdPartyProducts, imageRecord.at FROM imageRecord INNER JOIN (SELECT fridgeId, MAX(at) AS MaxDateTime FROM imageRecord GROUP BY fridgeId) groupedtt  ON imageRecord.fridgeId = groupedtt.fridgeId AND imageRecord.at = groupedtt.MaxDateTime INNER JOIN fridge ON imageRecord.fridgeId = fridge.id INNER JOIN company ON fridge.companyId = company.id WHERE fridge.localId=%s"
+            sql = "SELECT fridge.id, company.name, imageRecord.emptyLines, imageRecord.taggedLines, imageRecord.untaggedLines, imageRecord.thirdPartyProducts, fridge.capacity, groupedyy.count, imageRecord.at FROM imageRecord INNER JOIN (SELECT fridgeId, MAX(at) AS MaxDateTime FROM imageRecord GROUP BY fridgeId) groupedtt  ON imageRecord.fridgeId = groupedtt.fridgeId AND imageRecord.at = groupedtt.MaxDateTime INNER JOIN fridge ON imageRecord.fridgeId = fridge.id INNER JOIN company ON fridge.companyId = company.id INNER JOIN (SELECT id,imageId,COUNT(id) as count FROM product GROUP BY imageId) groupedyy ON imageRecord.id = groupedyy.imageId WHERE fridge.localId=%s"
             data = (_local)
             cursor = db.cursor()
             cursor.execute(sql, data)
@@ -27,7 +28,8 @@ class ModelFridge():
                 'taggedLines': f[3],
                 'untaggedLines': f[4],
                 'thirdPartyProducts': f[5],
-                'at': f[6]
+                'occupancy': math.ceil(f[7] * 100 / f[6]),
+                'at': f[8]
               })
 
             db.commit()
