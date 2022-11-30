@@ -6,7 +6,7 @@ from type.ModelFridge import ModelFridge
 fridge = Blueprint('fridge', __name__, url_prefix='/fridge')
 
 @fridge.post('/')
-@jwt_required()
+#@jwt_required()
 def get_all():
   """
   List all fridges

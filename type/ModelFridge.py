@@ -12,27 +12,49 @@ class ModelFridge():
           _json = request.json
           _local = _json['local']
           if _local and request.method == 'POST':
-            sql = "SELECT fridge.id, company.name, imageRecord.emptyLines, imageRecord.taggedLines, imageRecord.untaggedLines, imageRecord.thirdPartyProducts, fridge.capacity, groupedyy.count, imageRecord.at FROM imageRecord INNER JOIN (SELECT fridgeId, MAX(at) AS MaxDateTime FROM imageRecord GROUP BY fridgeId) groupedtt  ON imageRecord.fridgeId = groupedtt.fridgeId AND imageRecord.at = groupedtt.MaxDateTime INNER JOIN fridge ON imageRecord.fridgeId = fridge.id INNER JOIN company ON fridge.companyId = company.id INNER JOIN (SELECT id,imageId,COUNT(id) as count FROM product GROUP BY imageId) groupedyy ON imageRecord.id = groupedyy.imageId WHERE fridge.localId=%s"
+            sql = "SELECT * FROM fridge INNER JOIN company ON fridge.companyId = company.id WHERE localId=%s"
             data = (_local)
             cursor = db.cursor()
             cursor.execute(sql, data)
             data = cursor.fetchall()
             
             json_response = []
-
+            
             for f in data:
               json_response.append({
                 'id': f[0],
-                'name': f[1],
-                'emptyLines': f[2],
-                'taggedLines': f[3],
-                'untaggedLines': f[4],
-                'thirdPartyProducts': f[5],
-                'occupancy': math.ceil(f[7] * 100 / f[6]),
-                'at': f[8]
+                'localId': f[1],
+                'companyId': f[2],
+                'capacity': f[3],
+                'rows': f[4],
+                'company': f[6],
+                'emptyLines': 0,
+                'taggedLines': 0,
+                'untaggedLines': 0,
+                'thirdPartyProducts': 0
               })
 
             db.commit()
+
+            #####
+
+            sql = "SELECT fridgeId, emptyLines, taggedLines, untaggedLines, thirdPartyProducts, MAX(at) AS MaxDateTime FROM imageRecord GROUP BY fridgeId"
+            cursor = db.cursor()
+            cursor.execute(sql)
+            data = cursor.fetchall()
+
+            #for f in json_response:
+            #  print(f['id'])
+            for f in json_response:
+              for g in data:
+                if f['id'] == g[0]:
+                  f['emptyLines'] = g[1]
+                  f['taggedLines'] = g[2]
+                  f['untaggedLines'] = g[3]
+                  f['thirdPartyProducts'] = g[4]
+
+            #####
+            
             resp = jsonify(json_response)
             resp.status_code = 200
             return resp
@@ -55,7 +77,8 @@ class ModelFridge():
           _rows = _json['rows']
 
           if _local and _company and _capacity and _rows and request.method == 'POST':
-            sql = "INSERT INTO fridge(localId, companyId, capacity, rows) VALUES(%s, %s, %s, %s)"
+            sql = "INSERT INTO fridge(localId, companyId, capacity, numRows) VALUES (%s, %s, %s, %s)"
+            print(sql)
             data = (_local, _company, _capacity, _rows)
             cursor = db.cursor()
             cursor.execute(sql, data)
@@ -79,7 +102,7 @@ class ModelFridge():
           _id = _json['id']
 
           if _id and request.method == 'POST':
-            sql = "DELETE FROM fridge WHERE id=%s"
+            sql = "DELETE FROM fridge WHERE id=%s;"
             data = (_id)
             cursor = db.cursor()
             cursor.execute(sql, data)
@@ -125,7 +148,7 @@ class ModelFridge():
               'products': []
             }
 
-            sql = "SELECT product.id, catalog.name, product.xmax, product.ymax, product.ymin, product.xmin, product.confidence FROM product INNER JOIN catalog ON product.productId = catalog.id WHERE imageId=%s"
+            sql = "SELECT product.id, catalog.name, count(name), SUM(CASE WHEN product.labeled = '1' THEN 1 ELSE 0 END) AS labeled FROM product INNER JOIN catalog ON product.productId = catalog.id WHERE imageId=%s GROUP BY name"
             data = (response['imageRecord'])
             cursor = db.cursor()
             cursor.execute(sql, data)
@@ -136,11 +159,9 @@ class ModelFridge():
               response['products'].append({
                 'id': f[0],
                 'name': f[1],
-                'xmax': f[2],
-                'ymax': f[3],
-                'ymin': f[4],
-                'xmin': f[5],
-                'confidence': f[6]
+                'count': f[2],
+                'labeled': f[3],
+                'unlabeled': f[2] - f[3]
               })
 
             resp = jsonify(response)
